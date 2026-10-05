@@ -39,7 +39,9 @@ DEFAULT_PROVIDER = "claude-code"
 DEFAULT_MODELS = {"claude-code": "sonnet"}
 
 console = Console(stderr=True)
-app = typer.Typer(help="Argues against your change or plan: the strongest objection, falsifiable challenges, and what should have been built instead.")
+app = typer.Typer(
+    help="Argues against your change or plan: the strongest objection, falsifiable challenges, and what should have been built instead."
+)
 
 
 def _provider(provider: str | None, model: str | None, no_llm: bool):
@@ -50,7 +52,9 @@ def _provider(provider: str | None, model: str | None, no_llm: bool):
     return resolve_provider(PROVIDERS, name, chosen, tool_name=TOOL_NAME)
 
 
-def _argue_and_print(mode: Mode, text: str, context: str, provider, model, dry_run: bool, no_llm: bool, as_json: bool) -> None:
+def _argue_and_print(
+    mode: Mode, text: str, context: str, provider, model, dry_run: bool, no_llm: bool, as_json: bool
+) -> None:
     dry_run = resolve_dry_run(dry_run, no_llm)
     try:
         llm = _provider(provider, model, no_llm)
@@ -67,8 +71,15 @@ def _argue_and_print(mode: Mode, text: str, context: str, provider, model, dry_r
 
 @app.command()
 def review(
-    diff_range: Annotated[str | None, typer.Option("--range", "-r", help="git diff range (default: uncommitted changes vs HEAD)")] = None,
-    context: Annotated[str, typer.Option("--context", "-c", help="What the change is meant to do, so it can be argued against on its own terms")] = "",
+    diff_range: Annotated[
+        str | None, typer.Option("--range", "-r", help="git diff range (default: uncommitted changes vs HEAD)")
+    ] = None,
+    context: Annotated[
+        str,
+        typer.Option(
+            "--context", "-c", help="What the change is meant to do, so it can be argued against on its own terms"
+        ),
+    ] = "",
     provider: Annotated[str | None, provider_option()] = None,
     model: Annotated[str | None, model_option()] = None,
     as_json: Annotated[bool, json_option()] = False,
@@ -86,7 +97,9 @@ def review(
 
 @app.command()
 def pitch(
-    path: Annotated[Path | None, typer.Argument(help="Markdown plan/pitch/idea to argue against (omit to read stdin)")] = None,
+    path: Annotated[
+        Path | None, typer.Argument(help="Markdown plan/pitch/idea to argue against (omit to read stdin)")
+    ] = None,
     provider: Annotated[str | None, provider_option()] = None,
     model: Annotated[str | None, model_option()] = None,
     as_json: Annotated[bool, json_option()] = False,
@@ -100,7 +113,12 @@ def pitch(
 
 @app.command(name="rebut")
 def rebut_cmd(
-    response: Annotated[str | None, typer.Argument(help="Your answers to the challenges, e.g. '1: ran the test, passes. 3: ...' (omit to read stdin)")] = None,
+    response: Annotated[
+        str | None,
+        typer.Argument(
+            help="Your answers to the challenges, e.g. '1: ran the test, passes. 3: ...' (omit to read stdin)"
+        ),
+    ] = None,
     provider: Annotated[str | None, provider_option()] = None,
     model: Annotated[str | None, model_option()] = None,
     as_json: Annotated[bool, json_option()] = False,

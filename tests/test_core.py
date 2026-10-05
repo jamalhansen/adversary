@@ -79,7 +79,9 @@ class TestArgue:
 class TestRebut:
     def test_sends_original_report_and_response(self):
         session = Session("review", "the diff", _report().model_dump())
-        ruling = RebuttalReport(rulings=[Ruling(challenge=1, verdict="concede", reasoning="test passed")], remaining_objection="2 stands")
+        ruling = RebuttalReport(
+            rulings=[Ruling(challenge=1, verdict="concede", reasoning="test passed")], remaining_objection="2 stands"
+        )
         llm = FakeProvider(ruling)
         assert rebut(llm, session, "1: ran it, passes") is ruling
         system, user, model = llm.calls[0]
@@ -150,7 +152,10 @@ class TestRender:
 
     def test_rebuttal_maps_rulings_to_claims(self):
         rebuttal = RebuttalReport(
-            rulings=[Ruling(challenge=1, verdict="concede", reasoning="ok"), Ruling(challenge=9, verdict="hold", reasoning="?")],
+            rulings=[
+                Ruling(challenge=1, verdict="concede", reasoning="ok"),
+                Ruling(challenge=9, verdict="hold", reasoning="?"),
+            ],
             remaining_objection="nothing",
         )
         text = render_rebuttal(_report(1), rebuttal)

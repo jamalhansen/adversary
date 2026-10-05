@@ -80,7 +80,10 @@ def mock_report() -> AdversaryReport:
 
 def mock_rebuttal(report: AdversaryReport) -> RebuttalReport:
     return RebuttalReport(
-        rulings=[Ruling(challenge=i, verdict="hold", reasoning="[LLM MOCK RESPONSE]") for i in range(1, len(report.challenges) + 1)],
+        rulings=[
+            Ruling(challenge=i, verdict="hold", reasoning="[LLM MOCK RESPONSE]")
+            for i in range(1, len(report.challenges) + 1)
+        ],
         remaining_objection="[LLM MOCK RESPONSE]",
     )
 
@@ -153,7 +156,11 @@ def render_rebuttal(report: AdversaryReport, rebuttal: RebuttalReport) -> str:
     marks = {"concede": "CONCEDED", "hold": "HOLDS", "escalate": "ESCALATED"}
     lines = ["## Rulings"]
     for r in rebuttal.rulings:
-        claim = report.challenges[r.challenge - 1].claim if 0 < r.challenge <= len(report.challenges) else "(unknown challenge)"
+        claim = (
+            report.challenges[r.challenge - 1].claim
+            if 0 < r.challenge <= len(report.challenges)
+            else "(unknown challenge)"
+        )
         lines += [f"- **{r.challenge}. {marks[r.verdict]}** -- {claim}", f"  {r.reasoning}"]
     lines += ["", "## What still stands", rebuttal.remaining_objection]
     return "\n".join(lines) + "\n"

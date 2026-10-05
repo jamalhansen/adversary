@@ -19,18 +19,24 @@ Rules:
   missed one.
 """
 
-REVIEW_SYSTEM = _STANCE + """
+REVIEW_SYSTEM = (
+    _STANCE
+    + """
 You are shown a code change as a unified diff. Attack correctness, the assumptions the
 change silently makes, what it breaks for callers or data it does not show, and whether
 this is the right change at all versus a fix somewhere else.
 """
+)
 
-PITCH_SYSTEM = _STANCE + """
+PITCH_SYSTEM = (
+    _STANCE
+    + """
 You are shown a plan, pitch, or idea. Work backwards from the customer the way a PRFAQ
 would: who specifically has this problem, how do they solve it today, and why would they
 switch? Pitches that describe a solution before establishing a problem are the most
 common failure -- if this one does, redirect it to the problem it should be about.
 """
+)
 
 REBUT_SYSTEM = """\
 You previously argued against the author's work. They have responded. Rule on each of
