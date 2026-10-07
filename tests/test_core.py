@@ -1,6 +1,8 @@
 import subprocess
+from typing import Any, ClassVar, Literal
 
 import pytest
+from local_first_common.providers.base import BaseProvider
 
 from adversary.core import (
     EmptyInputError,
@@ -20,7 +22,7 @@ from adversary.prompts import PITCH_SYSTEM, REBUT_SYSTEM, REVIEW_SYSTEM
 from adversary.schema import AdversaryReport, Challenge, RebuttalReport, Ruling
 
 
-def _challenge(i: int, severity="serious") -> Challenge:
+def _challenge(i: int, severity: Literal["fatal", "serious", "worth-checking"] = "serious") -> Challenge:
     return Challenge(
         claim=f"claim {i}",
         evidence=f"line {i}",
@@ -39,14 +41,27 @@ def _report(n: int = 2) -> AdversaryReport:
     )
 
 
-class FakeProvider:
-    def __init__(self, result):
-        self.result = result
-        self.calls = []
+class FakeProvider(BaseProvider):
+    """Returns a preset result as-is (no validation), recording each call."""
 
-    def complete(self, system, user, response_model=None):
+    provider_name = "fake"
+    default_model = "fake"
+    known_models: ClassVar[list[str]] = ["fake"]
+    models_url = ""
+
+    def __init__(self, result):
+        super().__init__()
+        self.result, self.calls = result, []
+
+    def complete(self, system, user, response_model=None, images=None, max_retries=1, rate_limit_retries=3) -> Any:
         self.calls.append((system, user, response_model))
         return self.result
+
+    def _complete(self, system, user, response_model=None, images=None):
+        raise NotImplementedError
+
+    async def _acomplete(self, system, user, response_model=None, images=None):
+        raise NotImplementedError
 
 
 class TestArgue:
